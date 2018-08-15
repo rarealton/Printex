@@ -11,6 +11,9 @@ COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Printex'
 COIN_PORT=9107
 RPC_PORT=9108
+NODES=0
+CONFIGFOLDER2='/root/.Printex2'
+CONFIGFOLDER3='/root/.Printex3'
 
 NODEIP=$(curl -s4 api.ipify.org)
 
@@ -212,10 +215,13 @@ if [[ $EUID -ne 0 ]]; then
    echo -e "${RED}$0 must be run as root.${NC}"
    exit 1
 fi
-
-if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
-  echo -e "${RED}$COIN_NAME is already installed.${NC}"
-  exit 1
+echo -e "How many nodes are you wanting to setup?"
+read -e NODES
+if [[NODES==1]]; then
+  if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
+    echo -e "${RED}$COIN_NAME is already installed.${NC}"
+    exit 1
+  fi
 fi
 }
 
@@ -265,6 +271,11 @@ function important_information() {
  echo -e "================================================================================================================================"
 }
 
+function second_node(){
+}
+
+
+
 function setup_node() {
   get_ip
   create_config
@@ -280,7 +291,23 @@ function setup_node() {
 clear
 
 checks
+if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
+else
 prepare_system
 download_node
 setup_node
+fi
+
+if [NODES==2]; then
+CONFIGFOLDER='/root/.Printex2'
+setup_node
+elif [NODES==3];then
+
+fi
+
+
+
+
+
+
 
